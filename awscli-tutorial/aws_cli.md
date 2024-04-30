@@ -134,6 +134,11 @@
             ``` bash
             aws configure list --profile new-profile
             ```
+    - 설정된 모든 프로파일 정보를 아래 파일들을 통하여 확인 가능
+        - Credentials 파일: C:\Users\[Your-Username]\.aws\credentials
+        - Config 파일: C:\Users\[Your-Username]\.aws\config
+    
+- 프로필 명시적 지정 방법
     - aws 명령을 수행할 때 사용되는 자격증명의 프로필을 명시적으로 지정하는 방법
         ``` bash
         set AWS_PROFILE=[프로필 이름]
@@ -146,9 +151,6 @@
         ``` bash
         set AWS_PROFILE=
         ```
-    - 설정된 모든 프로파일 정보를 아래 파일들을 통하여 확인 가능
-        - Credentials 파일: C:\Users\[Your-Username]\.aws\credentials
-        - Config 파일: C:\Users\[Your-Username]\.aws\config
 
 - 현재 AWS 명령을 수행할 때 사용되는 AWS 자격증명이 무엇인지 확인하는 방법
     - 올바른 AWS 자격증명으로 실행되고 있는지 확인하는 용도
@@ -249,5 +251,6 @@
         ```
     6. `ap-northeast-2` 리전에서 사용 가능한 모든 가용 영역(Availability Zone) 정보 조회
         ```bash
-        aws ec2 describe-availability-zones --region ap-northeast-2
+        aws ec2 describe-availability-zones --region ap-northeast-2 --query AvailabilityZones[].ZoneName
         ```
+  
