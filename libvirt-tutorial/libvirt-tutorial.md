@@ -3,7 +3,7 @@
 
 본 문서는 클라우드컴퓨팅 수업의 libvirt 튜토리얼에 대한 실습 가이드임.
 
-## 1. 실습 준비
+# 1. 실습 준비
 * 실습 시에 원활한 작업을 위해 슈퍼유저 권한을 가지고 로그인
 
 ### 1-1. 실습을 위한 권한 설정 (슈퍼유저로 로그인)
@@ -33,7 +33,7 @@ apt update && apt install -y libvirt-clients libvirt-daemon-system virtinst clou
 
 
 
-## 2. 가상 네트워크 정의
+# 2. 가상 네트워크 정의
 간단한 가상 네트워크 정의 xml 파일을 vir-network.xml라는 이름으로 작성하기
 
 ### 2-1. `vi` 텍스트 에디터를 사용하여 `vir-network.xml` 파일을 생성
@@ -108,7 +108,7 @@ virsh net-info vir-network
 
 
 
-## 3. 가상 머신의 초기화 작업 준비
+# 3. 가상 머신의 초기화 작업 준비
 * cloud-init: 가상 머신 또는 클라우드 인스턴스에서 초기화 및 설정 작업을 자동화하기 위한 프로그램
 
 ### 3-1. VM 별 user-data 및 meta-data 파일 준비를 위한 폴더 생성
@@ -233,7 +233,7 @@ ls /var/lib/libvirt/images/
 
 
 
-## 4. 가상 머신 정의 및 시작
+# 4. 가상 머신 정의 및 시작
 * 가상 머신을 정의하고 시작하는 두 가지 방법이 있음
 1) `virt-install`
 2) `virsh define` & `virsh start `
@@ -393,7 +393,7 @@ PING 192.168.123.78 (192.168.123.78) 56(84) bytes of data.
 
 
 
-## 5. 가상 머신 복제(clone)
+# 5. 가상 머신 복제(clone)
 
 ### 5-1. 복제하려는 원본 가상 머신을 shutdown
 ```bash
@@ -456,7 +456,7 @@ ip address
 
 
 
-## 6. 가상 머신의 블록(block)
+# 6. 가상 머신의 블록(block)
 
 ### 6-1. 가상 머신의 블록 장치 목록을 나열
 ```bash
@@ -497,7 +497,7 @@ virsh domblkstat vm01 vda
 
 
 
-## 7. 가상 머신의 일시 중단(suspend) 및 재게(resume) 
+# 7. 가상 머신의 일시 중단(suspend) 및 재게(resume) 
 
 ### 7-1. 가상 머신의 일시 중단(suspend)
 ```bash
@@ -527,7 +527,7 @@ virsh list
 
 
 
-## 8. 가상 머신의 종료(shutdown, destory)와 시작(start)
+# 8. 가상 머신의 종료(shutdown, destory)와 시작(start)
 
 ### 8-1. 가상 머신의 종료
 * `destroy`: 전원을 갑자기 꺼버리는 것과 동일함
@@ -558,7 +558,7 @@ virsh list
 
 
 
-## 9. 가상 머신의 스냅샷(Snapshot)
+# 9. 가상 머신의 스냅샷(Snapshot)
 * 가상 머신의 현재 상태를 캡처하는 기술
 * 가상 머신의 메모리 상태, 디스크 이미지 및 가상 머신의 상태 정보를 포함
 * 가상 머신의 이전 상태를 저장하므로 가상 머신에서 오류가 발생한 경우 이전 상태로 복원할 수 있음
@@ -625,7 +625,7 @@ virsh snapshot-list vm02
 
 
 
-## 10. 가상 머신의 네트워크 구성 확인하기
+# 10. 가상 머신의 네트워크 구성 확인하기
 
 ### 10-1. 현재 호스트에서 사용 가능한 가상 네트워크 목록을 출력
 ```bash
@@ -664,7 +664,7 @@ virsh domifstat vm02 vnet3
 
 
 
-## 11. 가상 머신에 간단한 웹서버 구동하기
+# 11. 가상 머신에 간단한 웹서버 구동하기
 
 ### 11-1. 가상머신에 콘솔로 접속
 ```bash
@@ -730,7 +730,7 @@ iptables -t filter -I FORWARD -p tcp -d [Apache 서버가 구동중인 가상머
 
 
 
-## 12. libvirt-python으로 가상 머신 생성
+# 12. libvirt-python으로 가상 머신 생성
 
 ### 12-1. 기존 vm01을 destroy 및 undefine
 ```bash
