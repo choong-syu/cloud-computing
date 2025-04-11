@@ -14,7 +14,7 @@ sudo -i
 
 ### 1-2. 클라우드 전용 Ubuntu OS 이미지 파일 다운로드
 ```bash
-wget https://cloud-images.ubuntu.com/focal/current/focal-server-cloudimg-amd64.img
+wget https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img
 ```
 
 ### 1-3. 현재 경로에서 다운로드된 img 파일 확인
