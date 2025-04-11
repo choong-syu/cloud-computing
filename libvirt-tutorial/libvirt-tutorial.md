@@ -234,7 +234,7 @@ virt-install \
 --ram=2048 \
 --vcpus=2 \
 --os-variant detect=on,name=generic \
---disk path=/var/lib/libvirt/images/noble-server-cloudimg-amd64-vm01,device=disk,bus=virtio \
+--disk path=/var/lib/libvirt/images/noble-server-cloudimg-amd64-vm01.img,device=disk,bus=virtio \
 --disk path=/var/lib/libvirt/images/vm01-init.iso,device=cdrom \
 --network network=vir-network,model=virtio,mac=52:54:00:12:34:58 \
 --noautoconsole \
