@@ -113,14 +113,14 @@ mkdir -p /var/lib/libvirt/images/vm01 /var/lib/libvirt/images/vm02
 
 
 
-### 3-1. `vi` 텍스트 에디터를 사용하여 `user-data` 파일을 생성
+### 3-2. `vi` 텍스트 에디터를 사용하여 `user-data` 파일을 생성
 
 ```bash
 vi /var/lib/libvirt/images/vm01/user-data
 
 ```
 
-### 3-2. `vi` 에디터가 열리면 입력 모드 `i` 입력 후, 아래의 YAML 코드를 입력 및 저장하고 나오기 (`esc 키` -> :`wq`)
+### 3-3. `vi` 에디터가 열리면 입력 모드 `i` 입력 후, 아래의 YAML 코드를 입력 및 저장하고 나오기 (`esc 키` -> :`wq`)
 ```yaml
 #cloud-config
 hostname: vm01
@@ -140,26 +140,26 @@ disable_root: false
 * `#cloud-config`는 클라우드 컴퓨팅 환경에서 가상 머신(VM) 또는 서버 인스턴스를 초기 설정할 때 사용되는 특수한 주석임
 * `Cloud-init`이 이를 인식하고 실행
 
-### 3-3. `vm01`을 위해 작성된 `user-data` 확인
+### 3-4. `vm01`을 위해 작성된 `user-data` 확인
 ```bash
 cat /var/lib/libvirt/images/vm01/user-data
 
 ```
 
-### 3-4. `vm02`을 위해 작성된 `vm01`의 `user-data`를 복사
+### 3-5. `vm02`을 위해 작성된 `vm01`의 `user-data`를 복사
 ```bash
 cp /var/lib/libvirt/images/vm01/user-data /var/lib/libvirt/images/vm02/user-data
 
 ```
 
-### 3-5. `vi` 텍스트 에디터를 사용하여 `user-data2` 파일을 수정
+### 3-6. `vi` 텍스트 에디터를 사용하여 `user-data2` 파일을 수정
 
 ```bash
 vi /var/lib/libvirt/images/vm02/user-data
 
 ```
 
-### 3-6. `vi` 에디터가 열리면 입력 모드 `i` 입력 후, 아래 YAML 코드 수정 및 저장하고 나오기 (`esc 키` -> :`wq`)
+### 3-7. `vi` 에디터가 열리면 입력 모드 `i` 입력 후, 아래 YAML 코드 수정 및 저장하고 나오기 (`esc 키` -> :`wq`)
 ```yaml
 #cloud-config
 hostname: vm02
@@ -178,13 +178,13 @@ disable_root: false
 ```
 * `hostname`의 `vm01`을 `vm02`로 변경
 
-### 3-7. 작성된 문서 확인
+### 3-8. 작성된 문서 확인
 ```bash
 cat /var/lib/libvirt/images/vm02/user-data
 
 ```
 
-### 3-8 VM 별 meta-data 파일 생성
+### 3-9 VM 별 meta-data 파일 생성
 - 각 VM에서 cloud-init이 인식할 수 있도록, VM 별로 고유한 `instance-id` 값을 가진 `meta-data` 파일을 생성
 ```bash
 echo "instance-id: vm01" > /var/lib/libvirt/images/vm01/meta-data
@@ -192,7 +192,7 @@ echo "instance-id: vm02" > /var/lib/libvirt/images/vm02/meta-data
 
 ```
 
-### 3-9. VM 별로 ISO 이미지를 생성
+### 3-10. VM 별로 ISO 이미지를 생성
 - cloud-init을 이용하여 VM의 초기 설정(user-data, meta-data)을 자동화하기 위해 VM 별로 ISO 이미지를 생성하여 CD-ROM 형태로 마운트
 ```bash
 cd /var/lib/libvirt/images/
@@ -206,7 +206,7 @@ genisoimage -output vm02-init.iso -V cidata -r -J vm02/user-data vm02/meta-data
 - `vm01/user-data`, `vm01/meta-data`: ISO에 포함할 cloud-init 설정 파일들
 
 
-### 3-9. 이미지 파일들의 위치 조정
+### 3-11. 이미지 파일들의 위치 조정
 ```bash
 cd ~
 cp noble-server-cloudimg-amd64.img /var/lib/libvirt/images/noble-server-cloudimg-amd64-vm01.img
@@ -215,7 +215,7 @@ cp noble-server-cloudimg-amd64.img /var/lib/libvirt/images/noble-server-cloudimg
 ```
 
 
-### 3-10. 복사한 이미지 파일들 확인
+### 3-12. 복사한 이미지 파일들 확인
 ```bash
 ls /var/lib/libvirt/images/
 ```
