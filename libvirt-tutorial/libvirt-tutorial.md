@@ -25,6 +25,7 @@ ls -l
 ### 1-4. 실습에 필요한 라이브러리 일괄 설치
 ```bash
 apt update && apt install -y libvirt-clients libvirt-daemon-system virtinst cloud-image-utils python3-libvirt guestfs-tools
+
 ```
 
 ## 2. 가상 네트워크 정의
