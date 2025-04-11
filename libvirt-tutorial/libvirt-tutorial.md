@@ -561,7 +561,7 @@ virsh list
 ---
 
 
-# 9. 가상 상태 저장(save) 및 복원(restore) 실습
+# 9. 가상 머신 상태 저장(save) 및 복원(restore) 실습
 
 ### 9-1. 작업할 VM 이름 확인
 ```bash
