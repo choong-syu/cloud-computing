@@ -451,6 +451,8 @@ ip address
 
 ```
 
+### 5-7. 가상 머신에서 빠져나오기
+* Escape character is `Ctrl + ]`
 
 ---
 
