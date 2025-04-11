@@ -28,6 +28,11 @@ apt update && apt install -y libvirt-clients libvirt-daemon-system virtinst clou
 
 ```
 
+
+---
+
+
+
 ## 2. 가상 네트워크 정의
 간단한 가상 네트워크 정의 xml 파일을 vir-network.xml라는 이름으로 작성하기
 
@@ -98,6 +103,11 @@ virsh net-autostart vir-network
 virsh net-info vir-network
 ```
 
+
+---
+
+
+
 ## 3. 가상 머신의 초기화 작업 준비
 * cloud-init: 가상 머신 또는 클라우드 인스턴스에서 초기화 및 설정 작업을 자동화하기 위한 프로그램
 
@@ -110,8 +120,6 @@ virsh net-info vir-network
 ```bash
 mkdir -p /var/lib/libvirt/images/vm01 /var/lib/libvirt/images/vm02
 ```
-
-
 
 ### 3-2. `vi` 텍스트 에디터를 사용하여 `user-data` 파일을 생성
 
@@ -214,12 +222,15 @@ cp noble-server-cloudimg-amd64.img /var/lib/libvirt/images/noble-server-cloudimg
 
 ```
 
-
 ### 3-12. 복사한 이미지 파일들 확인
 ```bash
 ls /var/lib/libvirt/images/
 ```
 * 총 4개의 파일이 확인되어야 함.
+
+
+---
+
 
 
 ## 4. 가상 머신 정의 및 시작
@@ -378,6 +389,10 @@ PING 192.168.123.78 (192.168.123.78) 56(84) bytes of data.
 * Escape character is `Ctrl + ]`
 
 
+---
+
+
+
 ## 5. 가상 머신 복제(clone)
 
 ### 5-1. 복제하려는 원본 가상 머신을 shutdown
@@ -437,6 +452,10 @@ ip address
 ```
 
 
+---
+
+
+
 ## 6. 가상 머신의 블록(block)
 
 ### 6-1. 가상 머신의 블록 장치 목록을 나열
@@ -474,6 +493,10 @@ virsh domblkstat vm01 vda
 * 요금과 관련된 항목이라 말할 수 있는 항목은 wr_bytes (Write Bytes)와 rd_bytes (Read Bytes) 
 
 
+---
+
+
+
 ## 7. 가상 머신의 일시 중단(suspend) 및 재게(resume) 
 
 ### 7-1. 가상 머신의 일시 중단(suspend)
@@ -498,6 +521,10 @@ virsh resume vm02
 virsh list
 ```
 * suspend한 vm의 상태는 running 상태로 변경되어 있음
+
+
+---
+
 
 
 ## 8. 가상 머신의 종료(shutdown, destory)와 시작(start)
@@ -525,6 +552,10 @@ virsh start vm02
 virsh list
 ```
 * vm의 상태는 running 상태로 변경되어 있음
+
+
+---
+
 
 
 ## 9. 가상 머신의 스냅샷(Snapshot)
@@ -590,6 +621,10 @@ virsh snapshot-list vm02
 ```
 
 
+---
+
+
+
 ## 10. 가상 머신의 네트워크 구성 확인하기
 
 ### 10-1. 현재 호스트에서 사용 가능한 가상 네트워크 목록을 출력
@@ -623,6 +658,10 @@ virsh domifstat vm02 vnet3
 * `tx_packets`: 송신된 총 패킷 수
 * `tx_errs`:송신 과정에서 발생한 에러의 수 (에러가 발생하면 패킷이 손상되었거나 완전히 전달되지 않았을 수 있음)
 * `tx_drop`: 드롭된 송신 패킷 수 (인터페이스에서 버퍼 오버플로우 등의 이유로 처리하지 못하고 버린 수신 패킷의 수)
+
+
+---
+
 
 
 ## 11. 가상 머신에 간단한 웹서버 구동하기
@@ -685,6 +724,10 @@ iptables -t filter -I FORWARD -p tcp -d [Apache 서버가 구동중인 가상머
 
 ### 11-3. 윈도우의 웹브라우저에서 아파치 서버 접근하기
 * 윈도우 웹브라우저에서 `[우분투의 IP]:8080` 주소로 접근
+
+
+---
+
 
 
 ## 12. libvirt-python으로 가상 머신 생성
