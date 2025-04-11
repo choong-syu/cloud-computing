@@ -378,9 +378,68 @@ PING 192.168.123.78 (192.168.123.78) 56(84) bytes of data.
 * Escape character is `Ctrl + ]`
 
 
-## 5. 가상 머신의 블록(block)
+## 5. 가상 머신 복제(clone)
 
-### 5-1. 가상 머신의 블록 장치 목록을 나열
+### 5-1. 복제하려는 원본 가상 머신을 shutdown
+```bash
+virsh shutdown vm01
+```
+```bash
+virsh list --all
+```
+
+
+### 5-2. 원본 가상 머신을 기반으로 clone 가상 머신 생성 (virt-clone 사용)
+- `virt-clone` 명령어를 사용하면 기존 가상 머신(`vm01`)을 기반으로 빠르게 복제 가상 머신(`vm01-clone`)을 생성할 수 있음
+- 복제본은 디스크 이미지도 함께 복사되며 원본 VM과 동일한 설정을 유지함.
+```bash
+virt-clone \
+--original vm01 \
+--name vm01-clone \
+--file /var/lib/libvirt/images/noble-server-cloudimg-amd64-vm01-clone.img
+```
+- 원본 디스크를 새로운 디스크로 복사 후 복제가 완료되면 vm01-clone이 libvirt에 등록됨  
+`Allocating 'noble-server-cloudimg-amd64-vm01-clone.img'                                          | 1.7 GB  00:00:14 ...`  
+`Clone 'vm01-clone' created successfully.`
+
+
+### 5-3. 복제 가상 머신을 start
+```bash
+virsh start vm01-clone
+```
+```bash
+virsh list --all
+```
+
+
+### 5-4. 복제 가상 머신에 접속
+```bash
+virsh console vm01-clone
+```
+
+
+### 5-5. machine id 재설정 및 reboot
+- Ubuntu 시스템을 DHCP 서버로부터 “새로운 장비”처럼 인식받게 하기 위해 클라이언트 식별 정보를 초기화
+```bash
+sudo cloud-init clean
+sudo rm -f /etc/machine-id
+sudo systemd-machine-id-setup
+sudo reboot
+
+```
+
+
+### 5-6. clone된 가상 머신에서 ip address 확인
+- id/pw 입력하여 로그인 후 아래 입력하여 ip 주소 확인
+```bash
+ip address
+
+```
+
+
+## 6. 가상 머신의 블록(block)
+
+### 6-1. 가상 머신의 블록 장치 목록을 나열
 ```bash
 virsh domblklist vm02
 ```
@@ -392,7 +451,7 @@ virsh domblklist vm02
  vdb      /var/lib/libvirt/images/vm02-init.qcow2
 ```
 
-### 5-2. 가상 머신의 블록 장치에 대한 정보를 조회
+### 6-2. 가상 머신의 블록 장치에 대한 정보를 조회
 ```bash
 virsh domblkinfo vm02 vda
 ```
@@ -400,7 +459,7 @@ virsh domblkinfo vm02 vda
 * Allocation:     현재 `vda` 디스크에 실제로 할당된 공간의 양
 * Physical:       `vda` 디스크에 실제로 사용되고 있는 물리적 공간의 양
 
-### 5-3. 가상 머신에서 블록 장치의 I/O 통계 정보 조회
+### 6-3. 가상 머신에서 블록 장치의 I/O 통계 정보 조회
 ```bash
 virsh domblkstat vm01 vda
 ```
@@ -415,76 +474,76 @@ virsh domblkstat vm01 vda
 * 요금과 관련된 항목이라 말할 수 있는 항목은 wr_bytes (Write Bytes)와 rd_bytes (Read Bytes) 
 
 
-## 6. 가상 머신의 일시 중단(suspend) 및 재게(resume) 
+## 7. 가상 머신의 일시 중단(suspend) 및 재게(resume) 
 
-### 6-1. 가상 머신의 일시 중단(suspend)
+### 7-1. 가상 머신의 일시 중단(suspend)
 ```bash
 virsh suspend vm02
 ```
 
-### 6-2. 가상 머신 목록에서 일시정지된(paused 상태) 가상 머신 확인
+### 7-2. 가상 머신 목록에서 일시정지된(paused 상태) 가상 머신 확인
 ```bash
 virsh list
 ```
 * suspend한 vm의 상태는 paused 상태로 변경되어 있음
 
-### 6-3. 가상 머신의 재게(resume) 
+### 7-3. 가상 머신의 재게(resume) 
 ```bash
 virsh resume vm02
 ```
 * resume한 vm의 상태는 running 상태로 변경되어 있음
 
-### 6-4. 가상 머신 목록에서 가상 머신 상태 확인
+### 7-4. 가상 머신 목록에서 가상 머신 상태 확인
 ```bash
 virsh list
 ```
 * suspend한 vm의 상태는 running 상태로 변경되어 있음
 
 
-## 7. 가상 머신의 종료(shutdown, destory)와 시작(start)
+## 8. 가상 머신의 종료(shutdown, destory)와 시작(start)
 
-### 7-1. 가상 머신의 종료
+### 8-1. 가상 머신의 종료
 * `destroy`: 전원을 갑자기 꺼버리는 것과 동일함
 * `shutdown`: 가상 머신에게 정상적인 종료를 요청
 ```bash
 virsh destroy vm02
 ```
   
-### 7-2. 가상 머신 목록에서 종료된(shut off 상태) 가상 머신 확인
+### 8-2. 가상 머신 목록에서 종료된(shut off 상태) 가상 머신 확인
 ```bash
 virsh list --all
 ```
 * destroy한 vm의 상태는 shut off 상태로 변경되어 있음
 
-### 7-3. 가상 머신의 시작
+### 8-3. 가상 머신의 시작
 ```bash
 virsh start vm02
 ```
 
-### 7-4. 가상 머신 목록에서 가상 머신 상태 확인
+### 8-4. 가상 머신 목록에서 가상 머신 상태 확인
 ```bash
 virsh list
 ```
 * vm의 상태는 running 상태로 변경되어 있음
 
 
-## 8. 가상 머신의 스냅샷(Snapshot)
+## 9. 가상 머신의 스냅샷(Snapshot)
 * 가상 머신의 현재 상태를 캡처하는 기술
 * 가상 머신의 메모리 상태, 디스크 이미지 및 가상 머신의 상태 정보를 포함
 * 가상 머신의 이전 상태를 저장하므로 가상 머신에서 오류가 발생한 경우 이전 상태로 복원할 수 있음
 * 스냅샷은 가상 머신의 특정 시점에서 생성할 수 있음
 
-### 8-1. 가상 머신의 스냅샷을 커멘드 라인으로 생성
+### 9-1. 가상 머신의 스냅샷을 커멘드 라인으로 생성
 ```bash
 virsh snapshot-create-as vm02 --name initial-version
 ```
 
-### 8-2. 가상 머신의 스냅샷 목록 확인
+### 9-2. 가상 머신의 스냅샷 목록 확인
 ```bash
 virsh snapshot-list vm02
 ```
 
-### 8-3. 가상 머신 내부에 파일을 생성
+### 9-3. 가상 머신 내부에 파일을 생성
 ```bash
 virsh console vm02
 ```
@@ -499,15 +558,15 @@ ls -l
 ```
 * 생성된 파일 확인
   
-### 8-4. 가상 머신에서 빠져나오기
+### 9-4. 가상 머신에서 빠져나오기
 * Escape character is `Ctrl + ]`
 
-### 8-5. 가상 머신 `vm02`의 스냅샷 `initial-version`으로 되돌리기(revert)
+### 9-5. 가상 머신 `vm02`의 스냅샷 `initial-version`으로 되돌리기(revert)
 ```bash
 virsh snapshot-revert vm02 initial-version
 ```
 
-### 8-6. 가상 머신 내부에 파일 확인
+### 9-6. 가상 머신 내부에 파일 확인
 ```bash
 virsh console vm02
 ```
@@ -517,40 +576,40 @@ ls -l
 ```
 * 기존 hello_vm02 파일이 없음을 확인 (`initial-version`의 스냅샷으로 되돌아갔다는 의미임)
   
-### 8-7. 가상 머신에서 빠져나오기
+### 9-7. 가상 머신에서 빠져나오기
 * Escape character is `Ctrl + ]`
 
-### 8-8. 가상 머신 스냅샷 삭제
+### 9-8. 가상 머신 스냅샷 삭제
 ```bash
 virsh snapshot-delete vm02 initial-version
 ```
 
-### 8-9. 가상 머신 스냅샷 목록 확인
+### 9-9. 가상 머신 스냅샷 목록 확인
 ```bash
 virsh snapshot-list vm02
 ```
 
 
-## 9. 가상 머신의 네트워크 구성 확인하기
+## 10. 가상 머신의 네트워크 구성 확인하기
 
-### 9-1. 현재 호스트에서 사용 가능한 가상 네트워크 목록을 출력
+### 10-1. 현재 호스트에서 사용 가능한 가상 네트워크 목록을 출력
 ```bash
 virsh net-list --all
 ```
 
-### 9-2. 시스템의 네트워크 인터페이스 목록 확인
+### 10-2. 시스템의 네트워크 인터페이스 목록 확인
 ```bash
 virsh iface-list
 ```
 * 가상 환경에서 네트워크 구성과 트러블슈팅을 할 때 유용
 
-### 9-3. 가상 머신의 네트워크 인터페이스 목록 출력
+### 10-3. 가상 머신의 네트워크 인터페이스 목록 출력
 ```bash
 virsh domifaddr vm02
 ```
 * 가상 인터페이스의 MAC 주소(2계층)와 IP 주소(3계층) 확인 가능
 
-### 9-4. 가상 머신의 특정 네트워크 인터페이스에 대한 네트워크 I/O 통계 정보 출력
+### 10-4. 가상 머신의 특정 네트워크 인터페이스에 대한 네트워크 I/O 통계 정보 출력
 * 가상 머신의 인터페이스 사용량과 관련된 세부 정보를 확인할 때 사용
 * 빌링, 네트워크 트래픽 분석, 성능 모니터링, 문제 해결 등에 유용
 ```bash
@@ -566,14 +625,14 @@ virsh domifstat vm02 vnet3
 * `tx_drop`: 드롭된 송신 패킷 수 (인터페이스에서 버퍼 오버플로우 등의 이유로 처리하지 못하고 버린 수신 패킷의 수)
 
 
-## 10. 가상 머신에 간단한 웹서버 구동하기
+## 11. 가상 머신에 간단한 웹서버 구동하기
 
-### 10-1. 가상머신에 콘솔로 접속
+### 11-1. 가상머신에 콘솔로 접속
 ```bash
 virsh console vm02
 ```
 
-### 10-2. Apache 웹 서버 설치
+### 11-2. Apache 웹 서버 설치
 ```bash
 sudo apt update
 ```
@@ -583,7 +642,7 @@ sudo apt install apache2 -y
 ```
 * 아파치 웹 서버를 설치
 
-### 10-3. 웹 페이지(index.html) 수정
+### 11-3. 웹 페이지(index.html) 수정
 ```bash
 sudo vi /var/www/html/index.html
 ```
@@ -612,7 +671,7 @@ curl 127.0.0.1
 * 현재 구동되고 있는 웹서버에 웹페이지 요청
 * `index.html`의 내용이 응답으로 나타나는지 확인
 
-### 10-4. 윈도우에서 가상머신까지 접근할 수 있도록 네트워크 환경 구성
+### 11-4. 윈도우에서 가상머신까지 접근할 수 있도록 네트워크 환경 구성
 * 하이퍼바이저 역할을 수행하는 우분투에서 아래와 같은 명령어 필요
 ```bash
 iptables -t nat -I PREROUTING -d [우분투의 IP] -p tcp --dport 8080 -j DNAT --to-destination [Apache 서버가 구동중인 가상머신의 IP]:80
@@ -624,13 +683,13 @@ iptables -t filter -I FORWARD -p tcp -d [Apache 서버가 구동중인 가상머
 ```
 * NAT 규칙에 의해 변경된 목적지 주소 (가상 머신의 IP)로 가는 트래픽을 허용함의 의미
 
-### 10-3. 윈도우의 웹브라우저에서 아파치 서버 접근하기
+### 11-3. 윈도우의 웹브라우저에서 아파치 서버 접근하기
 * 윈도우 웹브라우저에서 `[우분투의 IP]:8080` 주소로 접근
 
 
-## 11. libvirt-python으로 가상 머신 생성
+## 12. libvirt-python으로 가상 머신 생성
 
-### 11-1. 기존 vm01을 destroy 및 undefine
+### 12-1. 기존 vm01을 destroy 및 undefine
 ```bash
 virsh destroy vm01
 ```
@@ -638,17 +697,17 @@ virsh destroy vm01
 virsh undefine vm01
 ```
 
-### 11-2. 가상 머신 상태 확인
+### 12-2. 가상 머신 상태 확인
 ```bash
 virsh list --all
 ```
 
-### 11-3. `vi` 텍스트 에디터를 사용하여 `script.py` 파일을 생성
+### 12-3. `vi` 텍스트 에디터를 사용하여 `script.py` 파일을 생성
 ```bash
 vi script.py
 ```
 
-### 11-4. `vi` 에디터가 열리면 입력 모드 `i` 입력 후, 아래의 코드를 입력 및 저장하고 나오기 (`esc 키` -> :`wq`)
+### 12-4. `vi` 에디터가 열리면 입력 모드 `i` 입력 후, 아래의 코드를 입력 및 저장하고 나오기 (`esc 키` -> :`wq`)
 ```python
 import libvirt
 import sys
@@ -739,7 +798,7 @@ finally:
 
 ```
 
-## 11-5. 파이썬 스크립트 실행을 통한 가상 머신 관리
+## 12-5. 파이썬 스크립트 실행을 통한 가상 머신 관리
 * 파이썬 스크립트를 사용하여 다양한 가상 머신 관리 작업을 수행할 수 있음
 
 * 가상 머신 생성
