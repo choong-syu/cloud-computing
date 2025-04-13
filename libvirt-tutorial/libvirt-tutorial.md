@@ -713,7 +713,7 @@ virsh domifstat vm02 vnet3
 
 ### 12-1. 가상머신에 콘솔로 접속
 ```bash
-virsh console vm02
+virsh console vm01
 ```
 
 ### 12-2. Apache 웹 서버 설치
@@ -728,23 +728,158 @@ sudo apt install apache2 -y
 
 ### 12-3. 웹 페이지(index.html) 수정
 ```bash
-sudo vi /var/www/html/index.html
+sudo rm -f /var/www/html/index.html && sudo vi /var/www/html/index.html
 ```
 * `/var/www/html/`: Linux 시스템에서 Apache 웹 서버의 기본 웹 컨텐츠 디렉토리
 * `index.html`: 웹 디렉토리의 기본 문서
-```bash
-:%d
-```
-* 명령 모드에서 위 명령을 입력하여 모든 내용을 지움
+
 ```html
 <!DOCTYPE html>
-<html>
+<html lang="ko">
 <head>
-   <title>Hello, I am VM02</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎉 VM 아파치 서버 실습 성공! 🎉</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap');
+
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            color: #333;
+            text-align: center;
+        }
+
+        .container {
+            background-color: #ffffff;
+            padding: 40px 50px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            color: #2c3e50;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        p {
+            font-size: 1.2em;
+            line-height: 1.6;
+            color: #555;
+            margin-bottom: 15px;
+        }
+
+        .highlight {
+            color: #e74c3c;
+            font-weight: bold;
+            font-size: 1.3em;
+        }
+
+        /* --- 가상화 애니메이션 스타일 시작 --- */
+        .virtualization-scene {
+            margin-top: 30px; /* 위쪽 문단과의 간격 */
+            margin-bottom: 20px; /* 아래쪽 footer와의 간격 */
+            padding: 20px;
+            border-radius: 8px;
+            background-color: #e9ecef; /* 배경색 살짝 추가 */
+            position: relative; /* 내부 요소 배치 기준 */
+        }
+
+        .vm-container {
+            display: flex; /* VM들을 가로로 배열 */
+            justify-content: center; /* 가운데 정렬 */
+            gap: 25px; /* VM 사이 간격 */
+            margin-bottom: 10px; /* 하이퍼바이저와의 간격 */
+            position: relative;
+            z-index: 1; /* 하이퍼바이저보다 위에 오도록 */
+        }
+
+        .vm {
+            font-size: 2.5em; /* VM 아이콘 크기 */
+            animation-name: jump;
+            animation-duration: 1s; /* 점프 애니메이션 속도 */
+            animation-timing-function: ease-in-out;
+            animation-iteration-count: infinite;
+            position: relative; /* transform 적용 기준 */
+        }
+
+        /* 순서대로 점프하도록 애니메이션 지연 시간 설정 */
+        .vm:nth-child(1) {
+            animation-delay: 0s;
+        }
+        .vm:nth-child(2) {
+            animation-delay: 0.2s; /* 두 번째 VM은 0.2초 뒤 시작 */
+        }
+        .vm:nth-child(3) {
+            animation-delay: 0.4s; /* 세 번째 VM은 0.4초 뒤 시작 */
+        }
+        /* VM 개수가 더 많으면 nth-child(4), (5) ... 추가 */
+
+
+        .hypervisor-layer {
+            background-color: #adb5bd; /* 하이퍼바이저 색상 */
+            color: white;
+            padding: 8px 0;
+            border-radius: 5px;
+            font-size: 0.9em;
+            font-weight: bold;
+            text-align: center;
+            width: 80%; /* 너비 조절 */
+            margin: 0 auto; /* 가운데 정렬 */
+            position: relative;
+            z-index: 0;
+        }
+
+        /* 점프 애니메이션 정의 */
+        @keyframes jump {
+            0%, 100% {
+                transform: translateY(0); /* 시작과 끝은 제자리 */
+            }
+            50% {
+                transform: translateY(-25px); /* 중간에 위로 점프 (값 조절 가능) */
+            }
+        }
+        /* --- 가상화 애니메이션 스타일 끝 --- */
+
+
+        .footer {
+            margin-top: 30px;
+            font-size: 0.9em;
+            color: #7f8c8d;
+        }
+    </style>
 </head>
 <body>
-   <h1>Hello, I am VM02</h1>
-</body> 
+    <div class="container">
+        <h1>🚀 실습 성공! 🚀</h1>
+        <p>
+            축하합니다! 여러분은 지금 <span class="highlight">자신이 직접 생성한 가상머신</span>에서
+            동작하는 아파치 웹 서버에 접속했습니다!
+        </p>
+        <div class="virtualization-scene">
+            <div class="vm-container">
+                <div class="vm">🖥️</div>
+                <div class="vm">🖥️</div>
+                <div class="vm">🖥️</div>
+                </div>
+            <div class="hypervisor-layer">Hypervisor</div>
+        </div>
+    </div>
+</body>
 </html>
 ```
 * 입력 모드로 전환 후, 위 내용을 작성
@@ -755,7 +890,12 @@ curl 127.0.0.1
 * 현재 구동되고 있는 웹서버에 웹페이지 요청
 * `index.html`의 내용이 응답으로 나타나는지 확인
 
-### 12-4. 윈도우에서 가상머신까지 접근할 수 있도록 네트워크 환경 구성
+
+### 12-4. 가상 머신에서 빠져나오기
+* Escape character is `Ctrl + ]`
+
+
+### 12-5. 윈도우에서 가상머신까지 접근할 수 있도록 네트워크 환경 구성
 * 하이퍼바이저 역할을 수행하는 우분투에서 아래와 같은 명령어 필요
 ```bash
 iptables -t nat -I PREROUTING -d [우분투의 IP] -p tcp --dport 8080 -j DNAT --to-destination [Apache 서버가 구동중인 가상머신의 IP]:80
@@ -767,7 +907,95 @@ iptables -t filter -I FORWARD -p tcp -d [Apache 서버가 구동중인 가상머
 ```
 * NAT 규칙에 의해 변경된 목적지 주소 (가상 머신의 IP)로 가는 트래픽을 허용함의 의미
 
-### 12-3. 윈도우의 웹브라우저에서 아파치 서버 접근하기
+### 12-5. 네트워크 자동화 구성 스크립트 생성
+```bash
+vi network.sh
+```
+* 아래 bash 스크립트를 복사하여 vi에 붙여넣기
+```bash
+#!/bin/bash
+
+# 0. 인자로 받은 VM 이름 사용 (기본값: vm1)
+VM_NAME=${1:-vm1}
+echo "[1] VM 이름: $VM_NAME"
+
+# 2. VM의 MAC 주소 추출
+VM_MAC=$(virsh domiflist "$VM_NAME" | awk '/vnet/ {print $5}')
+if [ -z "$VM_MAC" ]; then
+  echo "MAC 주소를 찾을 수 없습니다. VM 이름을 확인하세요."
+  exit 1
+fi
+echo "[2] VM MAC 주소: $VM_MAC"
+
+# 3. 연결된 libvirt 네트워크 이름 추출
+NETWORK_NAME=$(virsh domiflist "$VM_NAME" | awk '/vnet/ {print $3}')
+if [ -z "$NETWORK_NAME" ]; then
+  echo "VM의 네트워크 이름을 찾을 수 없습니다."
+  exit 1
+fi
+echo "[3] libvirt 네트워크 이름: $NETWORK_NAME"
+
+# 4. virsh net-info 로 브리지 이름 추출
+BRIDGE_NAME=$(virsh net-info "$NETWORK_NAME" | awk '/Bridge:/ {print $2}')
+if [ -z "$BRIDGE_NAME" ]; then
+  echo "브리지 이름을 찾을 수 없습니다. net-info 실패."
+  exit 1
+fi
+echo "[4] 브리지 이름: $BRIDGE_NAME"
+
+# 5. dnsmasq leases 파일 경로
+LEASES_FILE="/var/lib/libvirt/dnsmasq/${BRIDGE_NAME}.status"
+if [ ! -f "$LEASES_FILE" ]; then
+  echo "상태 파일이 존재하지 않습니다: $LEASES_FILE"
+  exit 1
+fi
+
+# 6. grep -B1 방식으로 VM의 IP 주소 추출
+VM_IP=$(grep -B1 "$VM_MAC" "$LEASES_FILE" | grep '"ip-address"' | awk -F'"' '{print $4}' | head -n1)
+if [ -z "$VM_IP" ]; then
+  echo "VM의 IP 주소를 찾을 수 없습니다."
+  exit 1
+fi
+echo "[5] VM IP 주소: $VM_IP"
+
+# 7. Ubuntu 호스트의 외부 인터페이스 및 IP 확인
+HOST_IFACE=$(ip route | grep default | awk '{print $5}')
+HOST_IP=$(ip addr show "$HOST_IFACE" | grep 'inet ' | awk '{print $2}' | cut -d/ -f1)
+if [ -z "$HOST_IP" ]; then
+  echo "호스트 IP를 찾을 수 없습니다. 인터페이스: $HOST_IFACE"
+  exit 1
+fi
+echo "[6] 호스트 인터페이스: $HOST_IFACE"
+echo "[7] 호스트 IP 주소: $HOST_IP"
+
+# 8. iptables 포워딩 규칙 (PREROUTING)
+PREROUTING_CMD="iptables -t nat -I PREROUTING -d $HOST_IP -p tcp --dport 8080 -j DNAT --to-destination $VM_IP:80"
+echo "[8] 실행: $PREROUTING_CMD"
+sudo $PREROUTING_CMD
+
+# 9. iptables 포워딩 허용 규칙 (FORWARD)
+FORWARD_CMD="iptables -t filter -I FORWARD -p tcp -d $VM_IP --dport 80 -j ACCEPT"
+echo "[9] 실행: $FORWARD_CMD"
+sudo $FORWARD_CMD
+
+# 10. 참고: 삭제 명령어 안내 (표시만)
+echo
+echo "[참고] 아래 명령으로 해당 iptables 규칙을 삭제할 수 있습니다:"
+echo "sudo iptables -t nat -D PREROUTING -d $HOST_IP -p tcp --dport 8080 -j DNAT --to-destination $VM_IP:80"
+echo "sudo iptables -t filter -D FORWARD -p tcp -d $VM_IP --dport 80 -j ACCEPT"
+echo
+
+# 11. 접속 안내
+echo "[접속 안내] 웹브라우저에서 다음 주소로 접속해 웹페이지를 확인할 수 있습니다:"
+echo "http://$HOST_IP:8080"
+
+```
+* 스크립트 실행
+```bash
+bash network.sh
+```
+
+### 12-6. 윈도우의 웹브라우저에서 아파치 서버 접근하기
 * 윈도우 웹브라우저에서 `[우분투의 IP]:8080` 주소로 접근
 
 
@@ -777,12 +1005,12 @@ iptables -t filter -I FORWARD -p tcp -d [Apache 서버가 구동중인 가상머
 
 # 13. libvirt-python으로 가상 머신 생성
 
-### 13-1. 기존 vm01을 destroy 및 undefine
+### 13-1. 기존 vm02을 destroy 및 undefine
 ```bash
-virsh destroy vm01
+virsh destroy vm02
 ```
 ```bash
-virsh undefine vm01
+virsh undefine vm02
 ```
 
 ### 13-2. 가상 머신 상태 확인
