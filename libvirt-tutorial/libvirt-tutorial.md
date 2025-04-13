@@ -1141,3 +1141,8 @@ python3 script.py resume
 ```bash
 python3 script.py snapshot
 ```
+
+* 가상 머신 스냅샷 생성
+```bash
+virsh snapshot-list <vm명>
+```
