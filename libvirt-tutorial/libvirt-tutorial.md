@@ -127,6 +127,9 @@ virsh net-info vir-network
 ```bash
 mkdir -p /var/lib/libvirt/images/vm01 /var/lib/libvirt/images/vm02
 ```
+```bash
+ls /var/lib/libvirt/images
+```
 
 ### 3-2. `vi` 텍스트 에디터를 사용하여 `user-data` 파일을 생성
 
