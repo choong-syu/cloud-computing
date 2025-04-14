@@ -41,6 +41,13 @@ apt update && apt install -y libvirt-clients libvirt-daemon-system virtinst clou
 ```bash
 vi vir-network.xml
 ```
+```bash
+:set paste
+```
+* vi나 vim에서 외부에서 복사한 코드를 붙여넣을 때, 자동 들여쓰기(auto indent)가 적용되어  
+코드의 원래 들여쓰기가 어긋나는 문제가 발생할 수 있음.
+* 이를 방지하기 위해 명령 모드로 진입하여 **`:set paste`** 명령어를 사용
+
 
 ### 2-2. `vi` 에디터가 열리면 입력 모드 `i` 입력 후, 아래의 XML 코드를 입력 및 저장하고 나오기 (`esc 키` -> :`wq`)
 ```xml
