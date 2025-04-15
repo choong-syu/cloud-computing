@@ -504,7 +504,7 @@ virsh domblkstat vm01 vda
 * rd_total_times (Total Time for Read Operations in nanoseconds): 모든 읽기 작업에 걸린 총 시간
 * wr_total_times (Total Time for Write Operations in nanoseconds): 모든 쓰기 작업에 걸린 총 시간
 * flush_total_times (Total Time for Flush Operations in nanoseconds): 모든 flush 작업(디스크 동기화)에 걸린 총 시간
-* 요금과 관련된 항목이라 말할 수 있는 항목은 `wr_bytes (Write Bytes)`와 `rd_bytes (Read Bytes)` 
+
 
 
 ---
