@@ -925,8 +925,8 @@ vi network.sh
 ```bash
 #!/bin/bash
 
-# 0. 인자로 받은 VM 이름 사용 (기본값: vm1)
-VM_NAME=${1:-vm1}
+# 0. 인자로 받은 VM 이름 사용 (기본값: vm01)
+VM_NAME=${1:-vm01}
 echo "[1] VM 이름: $VM_NAME"
 
 # 2. VM의 MAC 주소 추출
