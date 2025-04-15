@@ -22,8 +22,7 @@ wget https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.i
 ls -l
 ```
 
-### 1-4. 실습에 필요한 라이브러리 일괄 설치![image](https://github.com/user-attachments/assets/0f369fb8-b766-4a49-bd45-50013cbe2db5)
-![image](https://github.com/user-attachments/assets/e050a990-cb5d-4338-af35-af066e4c14c4)
+### 1-4. 실습에 필요한 라이브러리 일괄 설치
 
 ```bash
 apt update && apt install -y libvirt-clients libvirt-daemon-system virtinst cloud-image-utils python3-libvirt guestfs-tools
