@@ -958,22 +958,15 @@ if [ -z "$BRIDGE_NAME" ]; then
 fi
 echo "[4] 브리지 이름: $BRIDGE_NAME"
 
-# 5. dnsmasq leases 파일 경로
-LEASES_FILE="/var/lib/libvirt/dnsmasq/${BRIDGE_NAME}.status"
-if [ ! -f "$LEASES_FILE" ]; then
-  echo "상태 파일이 존재하지 않습니다: $LEASES_FILE"
-  exit 1
-fi
-
-# 6. grep -B1 방식으로 VM의 IP 주소 추출
-VM_IP=$(grep -B1 "$VM_MAC" "$LEASES_FILE" | grep '"ip-address"' | awk -F'"' '{print $4}' | head -n1)
+# 5. virsh domifaddr 결과에서 IP 주소 추출 (정규 파싱)
+VM_IP=$(virsh domifaddr "$VM_NAME" | awk '/vnet/ && /ipv4/ {print $4}' | cut -d/ -f1)
 if [ -z "$VM_IP" ]; then
-  echo "VM의 IP 주소를 찾을 수 없습니다."
+  echo "VM의 IP 주소를 찾을 수 없습니다. IP가 아직 할당되지 않았거나 VM이 비활성 상태일 수 있습니다."
   exit 1
 fi
 echo "[5] VM IP 주소: $VM_IP"
 
-# 7. Ubuntu 호스트의 외부 인터페이스 및 IP 확인
+# 6. Ubuntu 호스트의 외부 인터페이스 및 IP 확인
 HOST_IFACE=$(ip route | grep default | awk '{print $5}')
 HOST_IP=$(ip addr show "$HOST_IFACE" | grep 'inet ' | awk '{print $2}' | cut -d/ -f1)
 if [ -z "$HOST_IP" ]; then
@@ -983,26 +976,27 @@ fi
 echo "[6] 호스트 인터페이스: $HOST_IFACE"
 echo "[7] 호스트 IP 주소: $HOST_IP"
 
-# 8. iptables 포워딩 규칙 (PREROUTING)
+# 7. iptables 포워딩 규칙 (PREROUTING)
 PREROUTING_CMD="iptables -t nat -I PREROUTING -d $HOST_IP -p tcp --dport 8080 -j DNAT --to-destination $VM_IP:80"
 echo "[8] 실행: $PREROUTING_CMD"
 sudo $PREROUTING_CMD
 
-# 9. iptables 포워딩 허용 규칙 (FORWARD)
+# 8. iptables 포워딩 허용 규칙 (FORWARD)
 FORWARD_CMD="iptables -t filter -I FORWARD -p tcp -d $VM_IP --dport 80 -j ACCEPT"
 echo "[9] 실행: $FORWARD_CMD"
 sudo $FORWARD_CMD
 
-# 10. 참고: 삭제 명령어 안내 (표시만)
+# 9. 참고: 삭제 명령어 안내 (표시만)
 echo
 echo "[참고] 아래 명령으로 해당 iptables 규칙을 삭제할 수 있습니다:"
 echo "sudo iptables -t nat -D PREROUTING -d $HOST_IP -p tcp --dport 8080 -j DNAT --to-destination $VM_IP:80"
 echo "sudo iptables -t filter -D FORWARD -p tcp -d $VM_IP --dport 80 -j ACCEPT"
 echo
 
-# 11. 접속 안내
+# 10. 접속 안내
 echo "[접속 안내] 웹브라우저에서 다음 주소로 접속해 웹페이지를 확인할 수 있습니다:"
 echo "http://$HOST_IP:8080"
+
 
 ```
 * 스크립트 실행
