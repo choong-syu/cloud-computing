@@ -1,4 +1,3 @@
-![image](https://github.com/user-attachments/assets/25232220-d60d-478f-aacb-61d7bf1518c8)
 # Libvirt 실습 가이드
 
 본 문서는 클라우드컴퓨팅 수업의 libvirt 튜토리얼에 대한 실습 가이드임.
