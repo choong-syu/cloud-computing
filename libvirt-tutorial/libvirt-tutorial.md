@@ -1,4 +1,4 @@
-
+![image](https://github.com/user-attachments/assets/25232220-d60d-478f-aacb-61d7bf1518c8)
 # Libvirt 실습 가이드
 
 본 문서는 클라우드컴퓨팅 수업의 libvirt 튜토리얼에 대한 실습 가이드임.
@@ -23,10 +23,14 @@ ls -l
 ```
 
 ### 1-4. 실습에 필요한 라이브러리 일괄 설치
-
 ```bash
-apt update && apt install -y libvirt-clients libvirt-daemon-system virtinst cloud-image-utils python3-libvirt guestfs-tools
+apt update && apt install -y libvirt-clients libvirt-daemon-system virtinst cloud-image-utils python3-libvirt guestfs-tools qemu-img
 
+```
+
+### 1-5. 다운로드한 img 파일의 포멧 확인
+```bash
+qemu-img info noble-server-cloudimg-amd64.img
 ```
 
 
