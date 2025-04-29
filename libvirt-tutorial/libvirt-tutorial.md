@@ -748,7 +748,7 @@ sudo rm -f /var/www/html/index.html && sudo vi /var/www/html/index.html
 * `index.html`: 웹 디렉토리의 기본 문서
 ```bash
 :set paste
-``~
+```
 * 외부에서 복사한 내용을 붙여넣을 때 포맷이 망가지지 않도록 설정
 
 ```html
