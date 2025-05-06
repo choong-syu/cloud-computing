@@ -1,4 +1,4 @@
-# Windows용 AWS CLI 실습 가이드
+![image](https://github.com/user-attachments/assets/8a5e1ca0-1e02-4f01-9689-69ba1d31430e)![image](https://github.com/user-attachments/assets/72edde2e-c310-442e-8483-682ca1c4d589)# Windows용 AWS CLI 실습 가이드
 
 본 문서는 클라우드컴퓨팅 수업의 Windows용 AWS CLI 튜토리얼에 대한 실습 가이드입니다.
 
@@ -206,7 +206,8 @@
         - 특정 파라미터 또는 파라미터 그룹을 식별하는 데 사용되는 주소
         - 경로를 통해 파라미터 스토어 내의 구성 데이터나 설정을 계층적으로 접근 가능
         - AWS의 서비스 관련 파라미터들에 대한 경로들 예제
-            - `/aws/service/list`: AWS에서 제공하는 전체 서비스에 대한 경로 목록
+            - `/aws/service/global-infrastructure`: 글로벌 인프라 메타데이터의 루트 경로
+            - `/aws/service/global-infrastructure/services`: 글로벌 인프라에서 지원되는 AWS 서비스 목록
             - `/aws/service/global-infrastructure/regions`: AWS에서 지원하는 모든 지역(Regions) 목록
             - `/aws/service/global-infrastructure/regions/ap-northeast-2/services`: 특정 리전에서 제공하는 AWS 서비스 목록
             - `/aws/service/global-infrastructure/regions/ap-northeast-2/services/ec2/endpoint`: 특정 리전의 EC2 서비스 엔드포인트
@@ -220,36 +221,32 @@
     - `--query [QUERY]`: --query 옵션은 조회 결과에서 필요한 부분만을 추출하기 위해 사용됨. 이 옵션은 JMESPath(JSON Matching Expressions Path) 쿼리 언어를 사용함. 예를 들어, Parameters[].Value 쿼리는 반환된 파라미터 목록에서 각 파라미터의 값을 추출함. 이를 통해 결과 데이터를 더욱 정제하여 사용할 수 있음.
     - `--output [OUTPUT]`: --output 옵션은 명령어의 실행 결과가 어떻게 출력될지를 결정함. 가능한 값은 json, text, table, yaml 등이 있음.
 - SSM 관련 AWS CLI 명령어 사용 예제
-    1. AWS에서 제공하는 경로(Path) 목록 조회
-        ```bash
-        aws ssm get-parameters-by-path --path /aws/service/list --query Parameters[].Value --output json
-        ```
-    2. AWS의 리전 목록 및 목록 개수 조회
+    1. AWS의 리전 목록 및 목록 개수 조회
         ```bash
         aws ssm get-parameters-by-path --path /aws/service/global-infrastructure/regions --query Parameters[].Value
         ```
         ```bash
         aws ssm get-parameters-by-path --path /aws/service/global-infrastructure/regions --query length(Parameters[].Value)
         ```
-    3. AWS의 전체 서비스 목록 및 목록 개수 조회
+    2. AWS의 전체 서비스 목록 및 목록 개수 조회
         ```bash
         aws ssm get-parameters-by-path --path /aws/service/global-infrastructure/services --query Parameters[].Value
         ```
         ```bash
         aws ssm get-parameters-by-path --path /aws/service/global-infrastructure/services --query length(Parameters[].Value)
         ```
-    4. `ap-northeast-2` 리전에서 제공하는 AWS 서비스 목록 및 목록 개수 조회
+    3. `ap-northeast-2` 리전에서 제공하는 AWS 서비스 목록 및 목록 개수 조회
         ```bash
         aws ssm get-parameters-by-path --path /aws/service/global-infrastructure/regions/ap-northeast-2/services --query Parameters[].Value
         ```
         ```bash
         aws ssm get-parameters-by-path --path /aws/service/global-infrastructure/regions/ap-northeast-2/services --query length(Parameters[].Value)
         ```
-    5. `ap-northeast-2` 리전의 EC2 서비스 엔드포인트
+    4. `ap-northeast-2` 리전의 EC2 서비스 엔드포인트
         ```bash
         aws ssm get-parameter --name /aws/service/global-infrastructure/regions/ap-northeast-2/services/ec2/endpoint --query Parameter.Value
         ```
-    6. `ap-northeast-2` 리전에서 사용 가능한 모든 가용 영역(Availability Zone) 정보 조회
+    5. `ap-northeast-2` 리전에서 사용 가능한 모든 가용 영역(Availability Zone) 정보 조회
         ```bash
         aws ec2 describe-availability-zones --region ap-northeast-2 --query AvailabilityZones[].ZoneName
         ```
