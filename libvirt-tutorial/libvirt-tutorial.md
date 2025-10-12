@@ -31,6 +31,7 @@ apt update && apt install -y libvirt-clients libvirt-daemon-system virtinst clou
 ```bash
 qemu-img info noble-server-cloudimg-amd64.img
 ```
+- `file format: qcow2` 확인
 
 
 ---
