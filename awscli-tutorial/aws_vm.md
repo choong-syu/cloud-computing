@@ -81,6 +81,7 @@ ssh -i "[개인 키]" -o ProxyCommand="ssh -W %h:%p [public-username]@[public-IP
 **Private 인스턴스**  
 - 사용자: `ubuntu`  
 - Private IP: `10.0.1.163`
+- 키 파일: `test-key.pem`
 
 ### 실제 접속 명령
 
