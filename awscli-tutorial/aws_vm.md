@@ -62,9 +62,7 @@ ProxyCommand를 사용하면 Public 인스턴스를 중계 서버(proxy)로 활�
 ### SSH 템플릿
 
 ```bash
-ssh -i "[개인 키]" \
-    -o ProxyCommand="ssh -W %h:%p [public-username]@[public-IP] -i [개인 키]" \
-    [private-username]@[private-IP]
+ssh -i "[개인 키]" -o ProxyCommand="ssh -W %h:%p [public-username]@[public-IP] -i [개인 키]" [private-username]@[private-IP]
 ```
 
 - `-W %h:%p` : SSH Proxy Forwarding  
@@ -87,9 +85,7 @@ ssh -i "[개인 키]" \
 ### 실제 접속 명령
 
 ```bash
-ssh -i "test-key.pem" \
-    -o ProxyCommand="ssh -W %h:%p ubuntu@3.35.220.80 -i test-key.pem" \
-    ubuntu@10.0.1.163
+ssh -i "test-key.pem" -o ProxyCommand="ssh -W %h:%p ubuntu@3.35.220.80 -i test-key.pem" ubuntu@10.0.1.163
 ```
 
 ---
