@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>AWS S3 실습 피날레</title>
+  <style>
+    :root {
+      --bg1: #0f172a;
+      --bg2: #020617;
+      --accent1: #38bdf8;
+      --accent2: #f97316;
+      --accent3: #a855f7;
+      --card-bg: rgba(15, 23, 42, 0.88);
+      --card-border: rgba(148, 163, 184, 0.5);
+      --glow: 0 0 40px rgba(56, 189, 248, 0.7);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      margin: 0;
+      overflow: hidden;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: #e5e7eb;
+      background:
+        radial-gradient(circle at 10% 20%, rgba(56, 189, 248, 0.25), transparent 55%),
+        radial-gradient(circle at 80% 0%, rgba(251, 146, 60, 0.18), transparent 55%),
+        radial-gradient(circle at 0% 100%, rgba(168, 85, 247, 0.25), transparent 50%),
+        linear-gradient(135deg, var(--bg1), var(--bg2));
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    canvas#confetti {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .overlay {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      padding: 24px;
+    }
+
+    .card {
+      position: relative;
+      max-width: 640px;
+      width: 100%;
+      padding: 32px 28px 28px;
+      border-radius: 24px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      backdrop-filter: blur(18px);
+      box-shadow:
+        0 24px 80px rgba(15, 23, 42, 0.9),
+        0 0 60px rgba(59, 130, 246, 0.5);
+      overflow: hidden;
+      animation: card-in 0.9s ease-out forwards;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background:
+        conic-gradient(from 140deg,
+          rgba(56, 189, 248, 0.3),
+          rgba(251, 146, 60, 0.35),
+          rgba(168, 85, 247, 0.4),
+          rgba(56, 189, 248, 0.3));
+      opacity: 0.15;
+      filter: blur(32px);
+      z-index: -1;
+      animation: glow-spin 10s linear infinite;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 0 0, rgba(56, 189, 248, 0.4), transparent 55%);
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      font-size: 0.82rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #e5e7eb;
+      margin-bottom: 16px;
+    }
+
+    .badge-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: #22c55e;
+      box-shadow: 0 0 14px rgba(34, 197, 94, 0.8);
+    }
+
+    .badge-text {
+      opacity: 0.9;
+    }
+
+    h1 {
+      font-size: clamp(1.9rem, 3vw, 2.4rem);
+      margin-bottom: 12px;
+      font-weight: 800;
+      letter-spacing: 0.03em;
+      background: linear-gradient(120deg, #f9fafb, #e0f2fe, #fee2e2);
+      -webkit-background-clip: text;
+      color: transparent;
+      text-shadow: 0 0 28px rgba(15, 23, 42, 1);
+    }
+
+    .main-text {
+      font-size: 1.05rem;
+      line-height: 1.7;
+      margin-bottom: 14px;
+      color: #e5e7eb;
+    }
+
+    .sub {
+      font-size: 0.96rem;
+      line-height: 1.7;
+      color: #cbd5f5;
+      margin-bottom: 24px;
+    }
+
+    .highlight {
+      color: #fbbf24;
+      font-weight: 600;
+    }
+
+    .meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 24px;
+      font-size: 0.84rem;
+      color: #9ca3af;
+    }
+
+    .meta-pill {
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      background: radial-gradient(circle at 20% 0%, rgba(37, 99, 235, 0.22), transparent 60%);
+    }
+
+    .meta-pill strong {
+      color: #e5e7eb;
+      margin-right: 4px;
+    }
+
+    #replay {
+      appearance: none;
+      border: none;
+      outline: none;
+      cursor: pointer;
+      padding: 10px 18px;
+      border-radius: 999px;
+      font-size: 0.96rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      background: radial-gradient(circle at 0 0, rgba(251, 191, 36, 0.25), transparent 55%),
+                  linear-gradient(120deg, #f97316, #eab308, #22c55e);
+      color: #0f172a;
+      box-shadow:
+        0 12px 30px rgba(248, 250, 252, 0.18),
+        0 0 25px rgba(250, 204, 21, 0.75);
+      border: 1px solid rgba(248, 250, 252, 0.9);
+      transform: translateY(0);
+      transition:
+        transform 0.14s ease-out,
+        box-shadow 0.14s ease-out,
+        filter 0.14s ease-out;
+    }
+
+    #replay:hover {
+      transform: translateY(-1px) scale(1.02);
+      box-shadow:
+        0 18px 40px rgba(248, 250, 252, 0.26),
+        0 0 30px rgba(251, 191, 36, 0.9);
+      filter: brightness(1.02);
+    }
+
+    #replay:active {
+      transform: translateY(1px) scale(0.99);
+      box-shadow:
+        0 10px 22px rgba(15, 23, 42, 0.8),
+        0 0 16px rgba(251, 191, 36, 0.7);
+      filter: brightness(0.96);
+    }
+
+    .footer-note {
+      margin-top: 18px;
+      font-size: 0.8rem;
+      color: #9ca3af;
+      opacity: 0.9;
+    }
+
+    .footer-note span {
+      color: #e5e7eb;
+      font-weight: 500;
+    }
+
+    @keyframes card-in {
+      from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.97);
+      }
+      60% {
+        opacity: 1;
+        transform: translateY(0) scale(1.01);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @keyframes glow-spin {
+      from {
+        transform: rotate(0deg);
+      }
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .card {
+        padding: 24px 18px 20px;
+        border-radius: 18px;
+      }
+      h1 {
+        font-size: 1.6rem;
+      }
+      .meta-row {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="confetti"></canvas>
+
+  <div class="overlay">
+    <div class="card">
+      <div class="badge">
+        <span class="badge-dot"></span>
+        <span class="badge-text">AWS S3 LAB · FINALE</span>
+      </div>
+      <h1>클라우드컴퓨팅 마지막 실습 완료!</h1>
+      <p class="main-text">
+        <strong>“이 페이지를 보고 계시다면 마지막 실습이 완료되었음을 의미합니다.”</strong><br />
+        끝까지 따라와 준 여러분의 집중력과 끈기에 박수를 보냅니다.
+      </p>
+      <p class="sub">
+        이제 여러분은 <span class="highlight">버킷 생성 · 객체 업로드 · 권한과 정적 웹 호스팅</span>까지
+        직접 다뤄본 경험을 갖게 되었습니다.<br />
+        오늘 만든 버킷처럼, 앞으로의 프로젝트와 커리어도 하나씩 차곡차곡 채워 나가시기 바랍니다.
+      </p>
+
+      <div class="meta-row">
+        <div class="meta-pill">
+          <strong>STEP</strong> AWS S3 · 정적 웹사이트 · 퍼블릭 액세스
+        </div>
+        <div class="meta-pill">
+          <strong>YOU DID</strong> 설정 · 검증 · 접속 URL 확인까지 직접 완료
+        </div>
+      </div>
+
+      <button id="replay">꽃가루 다시 날리기</button>
+
+      <div class="footer-note">
+        오늘의 마무리: <span>AWS 콘솔을 닫아도, 여러분의 배움은 계속됩니다.</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      const canvas = document.getElementById("confetti");
+      const ctx = canvas.getContext("2d");
+
+      let width, height;
+      function resize() {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+      }
+      window.addEventListener("resize", resize);
+      resize();
+
+      const colors = [
+        "#f97316",
+        "#fbbf24",
+        "#4ade80",
+        "#38bdf8",
+        "#a855f7",
+        "#f472b6",
+      ];
+
+      const confettiCount = 260;
+      const confettis = [];
+      const TAU = Math.PI * 2;
+
+      function ConfettiPiece() {
+        this.reset(true);
+      }
+
+      ConfettiPiece.prototype.reset = function (fromTop) {
+        this.depth = 0.4 + Math.random() * 0.6; // 0.4 ~ 1.0 (원근감)
+        this.x = Math.random() * width;
+        this.y = fromTop
+          ? -Math.random() * height
+          : -20 - Math.random() * height * 0.2;
+        this.w = 6 + Math.random() * 10;
+        this.h = 10 + Math.random() * 16;
+        this.color = colors[(Math.random() * colors.length) | 0];
+        this.speedY = (1.2 + Math.random() * 2.8) * this.depth;
+        this.speedX = (-1 + Math.random() * 2) * this.depth;
+        this.rotation = Math.random() * TAU;
+        this.rotationSpeed = (-0.06 + Math.random() * 0.12) * this.depth;
+        this.tiltAngle = Math.random() * TAU;
+        this.tiltSpeed = 0.04 + Math.random() * 0.06;
+        this.swing = 12 + Math.random() * 18;
+        this.opacity = 0.7 + Math.random() * 0.3;
+      };
+
+      ConfettiPiece.prototype.update = function (delta) {
+        this.y += this.speedY * delta;
+        this.x += this.speedX * delta + Math.sin(this.tiltAngle) * 0.3;
+        this.tiltAngle += this.tiltSpeed * delta;
+        this.rotation += this.rotationSpeed * delta;
+
+        if (this.y > height + 30) {
+          this.reset(false);
+        }
+      };
+
+      ConfettiPiece.prototype.draw = function (ctx) {
+        const wobbleX = this.x + Math.sin(this.tiltAngle) * this.swing * this.depth;
+        const wobbleY = this.y + Math.cos(this.tiltAngle * 0.8) * 4 * this.depth;
+
+        const scale = this.depth;
+        const w = this.w * (0.5 + 0.5 * Math.abs(Math.cos(this.tiltAngle)));
+        const h = this.h * (0.7 + 0.3 * Math.abs(Math.sin(this.tiltAngle)));
+
+        ctx.save();
+        ctx.translate(wobbleX, wobbleY);
+        ctx.rotate(this.rotation);
+        ctx.scale(scale, scale);
+
+        const gradient = ctx.createLinearGradient(-w / 2, -h / 2, w / 2, h / 2);
+        gradient.addColorStop(0, this.color);
+        gradient.addColorStop(0.5, "white");
+        gradient.addColorStop(1, this.color);
+
+        ctx.fillStyle = gradient;
+        ctx.globalAlpha = this.opacity;
+
+        ctx.beginPath();
+        ctx.moveTo(-w / 2, -h / 2);
+        ctx.lineTo(w / 2, -h / 2);
+        ctx.lineTo(w / 2, h / 2);
+        ctx.lineTo(-w / 2, h / 2);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.restore();
+      };
+
+      for (let i = 0; i < confettiCount; i++) {
+        confettis.push(new ConfettiPiece());
+      }
+
+      let lastTime = performance.now();
+      function loop(now) {
+        const delta = (now - lastTime) / (1000 / 60); // 60fps 기준
+        lastTime = now;
+
+        ctx.clearRect(0, 0, width, height);
+
+        confettis.forEach((c) => {
+          c.update(delta);
+          c.draw(ctx);
+        });
+
+        requestAnimationFrame(loop);
+      }
+
+      requestAnimationFrame(loop);
+
+      const replayBtn = document.getElementById("replay");
+      replayBtn.addEventListener("click", () => {
+        confettis.forEach((c) => {
+          c.reset(true);
+        });
+      });
+
+    })();
+  </script>
+</body>
+</html>
