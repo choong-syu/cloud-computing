@@ -83,5 +83,14 @@ ssh -i "[개인 키]" -o ProxyCommand="ssh -W %h:%p [public-username]@[public-IP
 ssh -i "test-key.pem" -o ProxyCommand="ssh -W %h:%p ubuntu@3.35.220.80 -i test-key.pem" ubuntu@10.0.1.163
 ```
 
+### 주의사항
+- 윈도우에서 ssh접속 시 ssh 접속 실패 - Permissions for 'ssh key 파일경로' are too open
+```
+icacls.exe [key 이름].pem /reset
+icacls.exe [key 이름].pem /grant:r %username%:(R)
+icacls.exe [key 이름].pem /inheritance:r
+```
+
+
 ---
 
