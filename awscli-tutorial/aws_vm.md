@@ -11,19 +11,13 @@
 
 ```bash
 #!/bin/bash
+apt-get update -y
+apt-get install -y python3 python3-pip curl
+pip3 install flask requests --break-system-packages || pip3 install flask requests
 
-# 패키지 목록 업데이트
-apt update -y
+curl -L https://raw.githubusercontent.com/choong-syu/cloud-computing/main/awscli-tutorial/app.py -o /home/ubuntu/app.py
 
-# Apache2 웹서버 설치
-apt install -y apache2
-
-# Apache 자동 시작 설정 및 시작
-systemctl enable apache2
-systemctl start apache2
-
-# tee를 사용하여 간단한 HTML 페이지 생성
-echo "<h1>Cloud Computing Lab: Launching a VM with a Web Server Installed</h1>" | sudo tee /var/www/html/index.html > /dev/null
+nohup python3 /home/ubuntu/app.py > /home/ubuntu/app.log 2>&1 &
 
 ```
 
