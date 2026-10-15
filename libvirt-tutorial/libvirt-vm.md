@@ -2,26 +2,10 @@
 
 본 문서는 [기존 libvirt 튜토리얼](libvirt-tutorial.md)을 학생별 외부 서버 `vm*` 환경에 맞게 수정한 실습 가이드임.
 
-> **실행 위치**: Windows PowerShell → SSH로 접속한 외부 서버 `vm*` → 그 안에 생성하는 내부 VM `vm01`, `vm02` 순서임. 별도 표시가 없으면 명령어는 **외부 서버의 root 셸**에서 실행함. `virsh console`로 접속한 동안에는 **내부 VM의 ubuntu 셸**에서 실행함. `Ctrl + ]`는 VM을 끄는 것이 아니라 외부 서버 셸로 돌아오는 키임.
->
-> **자원 기준**: 외부 서버 RAM 약 2GB, CPU 2개, `/dev/kvm` 사용 가능 환경. 내부 VM은 각각 **512MB**로 설정하고, 복제 실습 후 clone을 종료하여 동시에 최대 2대만 실행함. 512MB는 이 기본 실습용 설정이며 추가 프로그램이나 부하 실습에는 메모리 증설이 필요함.
->
-> 각자의 외부 서버는 독립된 실습 환경이므로 내부 이름 `vm01`, `vm02`, `vir-network`는 모든 학생이 그대로 사용함. 외부 서버의 배정 번호와 내부 VM 이름을 혼동하지 않음.
->
-> 처음 실습하는 서버를 기준으로 함. 재실행할 때는 기존 VM·네트워크·파일의 존재를 먼저 확인하고, 다른 실습 데이터를 덮어쓰지 않음. 내부 VM의 비밀번호 `1111`은 이 격리된 교육 환경에서만 사용함.
-
 ### 외부 서버 접속 — Windows PowerShell
 아래 `44` 두 곳을 본인에게 배정된 번호로 변경하고, 개인별로 전달받은 SSH 비밀번호를 입력함.
 ```powershell
 ssh "student44:vm44@gate.su-cloud.syu.ac.kr" -p 2222
-```
-접속 후 다음 명령으로 배정된 서버와 자원을 확인함.
-```bash
-hostname
-free -h
-nproc
-ls -l /dev/kvm
-df -h /
 ```
 
 # 1. 실습 준비
@@ -317,10 +301,9 @@ virsh console vm01
 * login ID: ubuntu
 * login PW: 1111
 * 첫 부팅에는 시간이 걸림. 로그인 프롬프트가 보이지 않으면 잠시 기다린 뒤 Enter를 누름. `running`은 초기화 완료를 의미하지 않음.
-* 로그인 후 **내부 VM**에서 아래 명령을 실행하여 `status: done`과 루트 디스크 확장을 확인한 뒤 진행함.
+* 로그인 후 **내부 VM**에서 아래 명령을 실행하여 `status: done`을 확인한 뒤 진행함.
 ```bash
 cloud-init status --wait
-df -h /
 ```
 
 ### 4-5. 가상 머신에서 빠져나오기
@@ -424,10 +407,9 @@ virsh console vm02
 * login ID: ubuntu
 * login PW: 1111
 * 첫 부팅에는 시간이 걸림. 로그인 프롬프트가 보이지 않으면 잠시 기다린 뒤 Enter를 누름. `running`은 초기화 완료를 의미하지 않음.
-* 로그인 후 **내부 VM**에서 아래 명령을 실행하여 `status: done`과 루트 디스크 확장을 확인한 뒤 진행함.
+* 로그인 후 **내부 VM**에서 아래 명령을 실행하여 `status: done`을 확인한 뒤 진행함.
 ```bash
 cloud-init status --wait
-df -h /
 ```
 
 ### 4-17. 가상 머신 간의 연결 상태를 테스트
@@ -436,16 +418,17 @@ ping -c 3 <vm-ip-address>
 ```
 * `<vm-ip-address>`에 상대방 VM의 인터페이스에 할당되어 있는 IP 주소를 기입하여 명령어 실행
 * VM에 할당된 IP는 환경에 따라 다를 수 있음. 출력이 비어 있으면 부팅 및 DHCP 할당을 기다린 뒤 다시 조회함
-* 아래는 실행 결과
+* 아래는 3회 전송한 실행 결과 예시이며, 응답 시간은 환경에 따라 달라질 수 있음
 ```bash
-ubuntu@vm02:~$ ping  192.168.123.78
+ubuntu@vm02:~$ ping -c 3 192.168.123.78
 PING 192.168.123.78 (192.168.123.78) 56(84) bytes of data.
-64 bytes from 192.168.123.78: icmp_seq=1 ttl=64 time=3.59 ms
-64 bytes from 192.168.123.78: icmp_seq=2 ttl=64 time=0.807 ms
-64 bytes from 192.168.123.78: icmp_seq=3 ttl=64 time=0.902 ms
-64 bytes from 192.168.123.78: icmp_seq=4 ttl=64 time=0.589 ms
-64 bytes from 192.168.123.78: icmp_seq=5 ttl=64 time=0.888 ms
-64 bytes from 192.168.123.78: icmp_seq=6 ttl=64 time=1.06 ms
+64 bytes from 192.168.123.78: icmp_seq=1 ttl=64 time=1.15 ms
+64 bytes from 192.168.123.78: icmp_seq=2 ttl=64 time=1.05 ms
+64 bytes from 192.168.123.78: icmp_seq=3 ttl=64 time=0.905 ms
+
+--- 192.168.123.78 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2003ms
+rtt min/avg/max/mdev = 0.905/1.033/1.148/0.099 ms
 ```
 
 ### 4-18. 가상 머신에서 빠져나오기
@@ -483,17 +466,7 @@ virt-clone \
 `Clone 'vm01-clone' created successfully.`
 
 
-### 5-3. 복제 가상 머신의 초기화 데이터 준비 및 start
-외부 서버에서 clone 전용 hostname/instance-id와 ISO를 준비함. 원본의 초기화 ISO를 그대로 사용하면 내부 이름이 `vm01`로 남음.
-```bash
-mkdir -p /var/lib/libvirt/images/vm01-clone
-sed 's/^hostname: vm01$/hostname: vm01-clone/' /var/lib/libvirt/images/vm01/user-data > /var/lib/libvirt/images/vm01-clone/user-data
-echo "instance-id: vm01-clone" > /var/lib/libvirt/images/vm01-clone/meta-data
-genisoimage -output /var/lib/libvirt/images/vm01-clone-init.iso -V cidata -r -J /var/lib/libvirt/images/vm01-clone/user-data /var/lib/libvirt/images/vm01-clone/meta-data
-CLONE_CDROM=$(LC_ALL=C virsh domblklist vm01-clone --details | awk '$2 == "cdrom" {print $3; exit}')
-virsh change-media vm01-clone "$CLONE_CDROM" /var/lib/libvirt/images/vm01-clone-init.iso --config
-```
-이제 복제 VM을 시작함.
+### 5-3. 복제 가상 머신을 start
 ```bash
 virsh start vm01-clone
 ```
@@ -507,6 +480,7 @@ virsh list --all
 virsh console vm01-clone
 ```
 
+* libvirt에서의 이름은 `vm01-clone`이지만, 내부 호스트 이름은 원본과 같은 `vm01`로 표시됨. 이 실습에서는 원본의 초기화 ISO를 그대로 사용함.
 
 * `ubuntu` / `1111`로 로그인한 뒤 아래 명령이 완료될 때까지 기다림.
 ```bash
@@ -525,11 +499,9 @@ sudo reboot
 * 위 초기화 명령은 **clone 내부에서만** 실행함. 재부팅 중 콘솔이 끊기면 외부 서버에서 `virsh console vm01-clone`으로 다시 접속함.
 
 ### 5-6. clone된 가상 머신에서 ip address 확인
-- id/pw 입력하여 로그인 후 초기화 완료와 복제 VM의 이름·식별자·IP를 확인함. hostname과 instance-id는 `vm01-clone`, machine-id와 MAC 주소는 원본과 달라야 함.
+- id/pw 입력하여 로그인 후 초기화 완료와 machine-id·IP를 확인함. machine-id와 MAC 주소는 원본과 달라야 함.
 ```bash
 cloud-init status --wait
-hostname
-cat /var/lib/cloud/data/instance-id
 cat /etc/machine-id
 ip address
 
